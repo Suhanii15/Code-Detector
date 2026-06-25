@@ -5,6 +5,33 @@ const { getFileTree, getFileCommits, getFileContent } = require("../services/git
 const { extractFeatures } = require("../services/featureExtractor");
 const Analysis = require("../model/analysisModel");
 
+function getRecommendations(file) {
+  const recs = []
+  if (file.complexity > 40) recs.push("Consider splitting this file into smaller modules.")
+  if (file.churn_rate > 20) recs.push("This file changes frequently. Review architecture and ownership.")
+  if (file.comment_density < 0.05) recs.push("Documentation is sparse. Consider adding comments.")
+  if (file.unique_authors > 5) recs.push("Many contributors modify this file. Review responsibility boundaries.")
+  if (file.loc > 500) recs.push("Large file detected. Consider extracting reusable components.")
+  if (file.bug_fix_pct > 0.2) recs.push("High bug fix ratio. Consider increasing test coverage.")
+  return recs
+}
+
+function computeHotspots(results) {
+  const dirMap = {}
+  for (const f of results) {
+    const idx = f.path.lastIndexOf("/")
+    const dir = idx === -1 ? "/" : f.path.slice(0, idx)
+    if (!dirMap[dir]) dirMap[dir] = { sum: 0, count: 0, highCount: 0 }
+    dirMap[dir].sum += f.riskScore
+    dirMap[dir].count += 1
+    if (f.riskLevel === "high") dirMap[dir].highCount += 1
+  }
+  return Object.entries(dirMap)
+    .map(([path, d]) => ({ path, averageRisk: +(d.sum / d.count).toFixed(3), fileCount: d.count, highRiskCount: d.highCount }))
+    .sort((a, b) => b.averageRisk - a.averageRisk)
+    .slice(0, 5)
+}
+
 
 router.post("/", async(req,res) => {
     try{
@@ -25,6 +52,10 @@ const repo = match[2]; //owner and repo name is on index 1 and 2
         const cached = await Analysis.findOne({owner,repo});
         if(cached) {
           const total = cached.results.length
+          const filesWithRecs = cached.results.map(f => ({
+            ...f,
+            recommendations: f.recommendations || getRecommendations(f)
+          }))
           return res.json({
             owner: cached.owner,
             repo: cached.repo,
@@ -32,11 +63,12 @@ const repo = match[2]; //owner and repo name is on index 1 and 2
             totalFiles: total,
             stats: {
               total,
-              high: cached.results.filter(f => f.riskLevel === "high").length,
-              medium: cached.results.filter(f => f.riskLevel === "medium").length,
-              low: cached.results.filter(f => f.riskLevel === "low").length,
+              high: filesWithRecs.filter(f => f.riskLevel === "high").length,
+              medium: filesWithRecs.filter(f => f.riskLevel === "medium").length,
+              low: filesWithRecs.filter(f => f.riskLevel === "low").length,
             },
-            files: cached.results,
+            hotspots: computeHotspots(filesWithRecs),
+            files: filesWithRecs,
           })
         }
         //if that url already has been processed its data must have been saved in the mongo db data base
@@ -73,7 +105,8 @@ const repo = match[2]; //owner and repo name is on index 1 and 2
 
         const results=FeaturesArr.map((feat,i)=>({
             ...feat,                             // 1. Spreads Local Metrics (e.g., linesOfCode: 120, totalCommits: 14)
-            ...ml.data.results[i]                 // 2. Spreads ML Data (e.g., bugRiskScore: 0.82, complexityTier: "High")
+            ...ml.data.results[i],                // 2. Spreads ML Data (e.g., bugRiskScore: 0.82, complexityTier: "High")
+            recommendations: getRecommendations({...feat, ...ml.data.results[i]})
         }));
 
         await Analysis.create({owner,repo,results,analyzedAt : new Date()});
@@ -85,7 +118,9 @@ const repo = match[2]; //owner and repo name is on index 1 and 2
     low: results.filter(f => f.riskLevel === "low").length
 };
 
-        res.json({owner, repo, analyzedAt : new Date(), totalFiles : results.length,stats, files : results});
+        const hotspots = computeHotspots(results);
+
+        res.json({owner, repo, analyzedAt : new Date(), totalFiles : results.length, stats, hotspots, files : results});
 
     }
     catch(err){

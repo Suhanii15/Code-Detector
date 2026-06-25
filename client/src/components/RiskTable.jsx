@@ -1,20 +1,31 @@
 import { useState, useMemo } from 'react'
 import { Badge } from './Badge'
+import { RISK_COLORS } from '../utils/constants'
 
 function formatRiskScore(score) {
   return (score * 100).toFixed(0)
 }
 
+const LEVELS = ['high', 'medium', 'low']
+
 export function RiskTable({ files, onSelect, selectedPath }) {
   const [sortBy, setSortBy] = useState('riskScore')
   const [sortDir, setSortDir] = useState('desc')
   const [search, setSearch] = useState('')
+  const [levelFilter, setLevelFilter] = useState(null)
+
+  const toggleLevel = (level) => {
+    setLevelFilter((prev) => (prev === level ? null : level))
+  }
 
   const sorted = useMemo(() => {
     let list = [...files]
     if (search) {
       const q = search.toLowerCase()
       list = list.filter((f) => f.path.toLowerCase().includes(q))
+    }
+    if (levelFilter) {
+      list = list.filter((f) => f.riskLevel === levelFilter)
     }
     list.sort((a, b) => {
       const aVal = a[sortBy]
@@ -23,7 +34,7 @@ export function RiskTable({ files, onSelect, selectedPath }) {
       return sortDir === 'asc' ? aVal - bVal : bVal - aVal
     })
     return list
-  }, [files, sortBy, sortDir, search])
+  }, [files, sortBy, sortDir, search, levelFilter])
 
   const toggleSort = (key) => {
     if (sortBy === key) {
@@ -41,14 +52,33 @@ export function RiskTable({ files, onSelect, selectedPath }) {
 
   return (
     <div>
-      <div className="mb-3">
+      <div className="flex items-center gap-2 mb-3">
         <input
           type="text"
           placeholder="Search files..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full bg-gray-800 border border-gray-700 rounded-md px-3 py-1.5 text-sm text-gray-200 placeholder-gray-500 outline-none focus:border-blue-500/50"
+          className="flex-1 bg-gray-800 border border-gray-700 rounded-md px-3 py-1.5 text-sm text-gray-200 placeholder-gray-500 outline-none focus:border-blue-500/50"
         />
+        <div className="flex gap-1">
+          {LEVELS.map((level) => {
+            const active = levelFilter === level
+            const c = RISK_COLORS[level]
+            return (
+              <button
+                key={level}
+                onClick={() => toggleLevel(level)}
+                className={`px-2.5 py-1.5 rounded-md text-xs font-medium border transition-colors ${
+                  active
+                    ? `${c.bg} ${c.text} ${c.border}`
+                    : 'bg-gray-800/60 border-gray-700 text-gray-500 hover:text-gray-300'
+                }`}
+              >
+                {level}
+              </button>
+            )
+          })}
+        </div>
       </div>
       <div className="overflow-x-auto">
         <table className="w-full text-sm">

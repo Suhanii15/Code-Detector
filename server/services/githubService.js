@@ -12,12 +12,14 @@ async function getFileTree (owner,repo){
     const {data} = await octokit.rest.git.getTree({    //only get data from the whole object that github sends
       owner,repo, tree_sha : "HEAD" , recursive : "1"   //head tells github to look at every last commit and recursive 1 makes sure that all the sub folders are scanned not only the root folder
     }); 
-    return data.tree                                     //flat array of all the folder and files returned by github
-    .filter(f => f.type === "blob" &&               //in git  files are named as blobd and folders as tree
-        /\.(js|ts|jsx|py)$/.test(f.path) &&
-        (f.size || 0) <  100000                //ensuring the file size to be less than or equal to 1MB
-    ) 
-    .slice(0,60);   // cap at 60 files for speed
+    return data.tree
+    .filter(f => f.type === "blob" &&
+        !f.path.includes("node_modules") &&
+        !f.path.includes("package-lock") &&
+        /\.(js|ts|jsx|tsx|py|rb|go|rs|java|c|cpp|h|hpp|cs|php|swift|kt|scala|ex|exs|vue|svelte|cjs|mjs|css|scss|sass|less|html|htm|xml|json|yaml|yml|toml|md|sql|sh|bash|zsh|fish|ps1|bat|tf|dockerfile)$/i.test(f.path) &&
+        (f.size || 0) <  1000000
+    )
+    .slice(0, 500);
 }   
 
 
