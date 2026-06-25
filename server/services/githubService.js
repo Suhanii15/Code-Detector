@@ -50,5 +50,15 @@ async function getFileContent(owner,repo,path){
     }
 }
 
+async function getRepoInfo(owner,repo){
+    const {data} = await octokit.rest.repos.get({
+        owner,
+        repo
+    })
 
-module.exports ={getFileTree,getFileCommits,getFileContent}
+    return {
+        pushed_at : data.pushed_at
+    };
+}
+
+module.exports ={getFileTree,getFileCommits,getFileContent,getRepoInfo}

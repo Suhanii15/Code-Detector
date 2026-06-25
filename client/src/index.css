@@ -13,9 +13,70 @@ body {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #374151;
+  background: #d1d5db;
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #4b5563;
+  background: #9ca3af;
+}
+
+@keyframes bar-grow {
+  from { width: 0% !important; }
+}
+
+.animate-bar-grow {
+  animation: bar-grow 0.6s ease-out both;
+}
+
+.bg-page {
+  background-color: #eef2f8;
+  background-image:
+    /* Grid lines — vertical */
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 49px,
+      rgba(0,0,0,0.035) 49px,
+      rgba(0,0,0,0.035) 50px
+    ),
+    /* Grid lines — horizontal */
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 49px,
+      rgba(0,0,0,0.035) 49px,
+      rgba(0,0,0,0.035) 50px
+    ),
+    /* Soft blue spotlight near top-center */
+    radial-gradient(
+      ellipse 700px 350px at 50% -120px,
+      rgba(59,130,246,0.07) 0%,
+      transparent 70%
+    );
+}
+
+@media (prefers-color-scheme: dark) {
+  .bg-page {
+    background-color: #0f172a;
+    background-image:
+      repeating-linear-gradient(
+        90deg,
+        transparent,
+        transparent 49px,
+        rgba(255,255,255,0.02) 49px,
+        rgba(255,255,255,0.02) 50px
+      ),
+      repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 49px,
+        rgba(255,255,255,0.02) 49px,
+        rgba(255,255,255,0.02) 50px
+      ),
+      radial-gradient(
+        ellipse 700px 350px at 50% -120px,
+        rgba(59,130,246,0.08) 0%,
+        transparent 70%
+      );
+  }
 }

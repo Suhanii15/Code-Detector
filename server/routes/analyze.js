@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const axios = require("axios");
-const { getFileTree, getFileCommits, getFileContent } = require("../services/githubService");
+const { getFileTree, getFileCommits, getFileContent, getRepoInfo} = require("../services/githubService");
 const { extractFeatures } = require("../services/featureExtractor");
 const Analysis = require("../model/analysisModel");
 
@@ -46,11 +46,16 @@ if (!match) {
 const owner = match[1];
 const repo = match[2]; //owner and repo name is on index 1 and 2
 
+const repoInfo = await getRepoInfo(owner,repo);
+
          //Uses a Regular Expression (match) to split the URL and isolate the repository owner (username/org) 
         // and the repository name. If the URL is incorrectly formatted, it immediately stops and returns a 400 Bad Request error.
 
         const cached = await Analysis.findOne({owner,repo});
-        if(cached) {
+        if(cached  &&
+    cached.lastGithubPush === repoInfo.pushed_at) {
+        console.log("Cache hit");
+
           const total = cached.results.length
           const filesWithRecs = cached.results.map(f => ({
             ...f,
@@ -109,8 +114,20 @@ const repo = match[2]; //owner and repo name is on index 1 and 2
             recommendations: getRecommendations({...feat, ...ml.data.results[i]})
         }));
 
-        await Analysis.create({owner,repo,results,analyzedAt : new Date()});
-        //stores the data in mongo db
+        await Analysis.findOneAndUpdate(
+          { owner, repo },
+          {
+            $set: {
+              results,
+              analyzedAt: new Date(),
+              lastGithubPush: repoInfo.pushed_at,
+              owner,
+              repo,
+            },
+          },
+          { upsert: true, new: true }
+        );
+        // stores the data in mongo db
         const stats = {
     total: results.length,
     high: results.filter(f => f.riskLevel === "high").length,

@@ -8,6 +8,19 @@ function formatRiskScore(score) {
 
 const LEVELS = ['high', 'medium', 'low']
 
+function SortIcon({ col, sortBy, sortDir }) {
+  if (sortBy !== col) return <span className="text-gray-300 ml-1 font-sans">&#8597;</span>
+  return <span className="text-blue-600 ml-1 font-sans">{sortDir === 'asc' ? '&#8593;' : '&#8595;'}</span>
+}
+
+const COLUMNS = [
+  { key: 'path', label: 'File', align: 'text-left', sortable: false, width: '' },
+  { key: 'riskScore', label: 'Risk', align: 'text-right', sortable: true, width: 'w-16' },
+  { key: 'riskLevel', label: 'Level', align: 'text-right', sortable: true, width: 'w-16' },
+  { key: 'complexity', label: 'Complexity', align: 'text-right', sortable: true, width: 'w-20' },
+  { key: 'churn_rate', label: 'Churn', align: 'text-right', sortable: true, width: 'w-16' },
+]
+
 export function RiskTable({ files, onSelect, selectedPath }) {
   const [sortBy, setSortBy] = useState('riskScore')
   const [sortDir, setSortDir] = useState('desc')
@@ -45,11 +58,6 @@ export function RiskTable({ files, onSelect, selectedPath }) {
     }
   }
 
-  const SortIcon = ({ col }) => {
-    if (sortBy !== col) return <span className="text-gray-700 ml-1">&#8597;</span>
-    return <span className="text-blue-400 ml-1">{sortDir === 'asc' ? '&#8593;' : '&#8595;'}</span>
-  }
-
   return (
     <div>
       <div className="flex items-center gap-2 mb-3">
@@ -58,7 +66,7 @@ export function RiskTable({ files, onSelect, selectedPath }) {
           placeholder="Search files..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="flex-1 bg-gray-800 border border-gray-700 rounded-md px-3 py-1.5 text-sm text-gray-200 placeholder-gray-500 outline-none focus:border-blue-500/50"
+          className="flex-1 bg-white border border-gray-300 rounded-md px-3 py-1.5 text-sm text-gray-800 placeholder-gray-400 outline-none focus:border-blue-500"
         />
         <div className="flex gap-1">
           {LEVELS.map((level) => {
@@ -71,7 +79,7 @@ export function RiskTable({ files, onSelect, selectedPath }) {
                 className={`px-2.5 py-1.5 rounded-md text-xs font-medium border transition-colors ${
                   active
                     ? `${c.bg} ${c.text} ${c.border}`
-                    : 'bg-gray-800/60 border-gray-700 text-gray-500 hover:text-gray-300'
+                    : 'bg-gray-50 border-gray-200 text-gray-500 hover:text-gray-700'
                 }`}
               >
                 {level}
@@ -83,32 +91,37 @@ export function RiskTable({ files, onSelect, selectedPath }) {
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-gray-800 text-xs text-gray-500 uppercase tracking-wider">
-              <th className="text-left py-2 pr-4 font-medium">File</th>
-              <th className="text-right py-2 px-4 font-medium cursor-pointer select-none" onClick={() => toggleSort('riskScore')}>
-                Risk Score <SortIcon col="riskScore" />
-              </th>
-              <th className="text-right py-2 pl-4 font-medium cursor-pointer select-none" onClick={() => toggleSort('riskLevel')}>
-                Level <SortIcon col="riskLevel" />
-              </th>
+            <tr className="border-b border-gray-200 text-xs text-gray-500 uppercase tracking-wider">
+              {COLUMNS.map((col) => (
+                <th
+                  key={col.key}
+                  className={`${col.align} py-2 pr-4 font-medium ${col.sortable ? 'cursor-pointer select-none' : ''} ${col.width || ''}`}
+                  onClick={col.sortable ? () => toggleSort(col.key) : undefined}
+                >
+                  {col.label}
+                  {col.sortable && <SortIcon col={col.key} sortBy={sortBy} sortDir={sortDir} />}
+                </th>
+              ))}
             </tr>
           </thead>
           <tbody>
             {sorted.map((f) => (
               <tr
                 key={f.path}
-                className={`border-b border-gray-800/60 hover:bg-gray-800/40 cursor-pointer transition-colors ${selectedPath === f.path ? 'bg-blue-950/20' : ''}`}
+                className={`border-b border-gray-100 hover:bg-gray-50 cursor-pointer transition-colors ${selectedPath === f.path ? 'bg-blue-50' : ''}`}
                 onClick={() => onSelect?.(f)}
               >
-                <td className="py-2.5 pr-4 text-gray-300 font-mono text-xs truncate max-w-[400px]">{f.path}</td>
-                <td className="py-2.5 px-4 text-right text-gray-200 tabular-nums">{formatRiskScore(f.riskScore)}%</td>
+                <td className="py-2.5 pr-4 text-gray-700 font-mono text-xs truncate max-w-[400px]">{f.path}</td>
+                <td className="py-2.5 px-4 text-right text-gray-800 tabular-nums">{formatRiskScore(f.riskScore)}%</td>
                 <td className="py-2.5 pl-4 text-right"><Badge level={f.riskLevel}>{f.riskLevel}</Badge></td>
+                <td className="py-2.5 px-4 text-right text-gray-800 tabular-nums">{f.complexity}</td>
+                <td className="py-2.5 pl-4 text-right text-gray-800 tabular-nums">{f.churn_rate}</td>
               </tr>
             ))}
           </tbody>
         </table>
         {sorted.length === 0 && (
-          <p className="text-center text-gray-600 py-8 text-sm">No files match your search.</p>
+          <p className="text-center text-gray-400 py-8 text-sm">No files match your search.</p>
         )}
       </div>
     </div>

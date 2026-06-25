@@ -1,5 +1,4 @@
 import { useState, useCallback } from 'react'
-import { Navbar } from './components/Navbar'
 import { AnalyzePage } from './pages/AnalyzePage'
 import { Dashboard } from './pages/Dashboard'
 import api from './services/api'
@@ -52,8 +51,7 @@ export default function App() {
   }, [])
 
   return (
-    <div className="min-h-screen bg-gray-950 text-gray-300 flex flex-col">
-      <Navbar onReset={handleReset} />
+    <div className="min-h-screen bg-gray-50 text-gray-700 flex flex-col">
       <div className="flex-1 flex flex-col min-h-0">
         {view === 'dashboard' && result ? (
           <Dashboard result={result} onBack={handleReset} />
