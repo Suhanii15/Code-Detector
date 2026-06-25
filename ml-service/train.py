@@ -61,6 +61,6 @@ for feat, imp in sorted(zip(FEATURES, importances), key=lambda x: -x[1]):
     print(f"  {feat:<20} {bar}  {imp:.3f}")
 
 
-joblib.dump(pipeline, "model.pkl")
-joblib.dump(FEATURES,  "features.pkl")
+joblib.dump(pipeline, "models/model.pkl")
+joblib.dump(FEATURES,  "models/features.pkl")
 print("\nModel saved ")

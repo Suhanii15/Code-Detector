@@ -1,12 +1,13 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS 
-import joblib, pandas as pd
+import joblib, pandas as pd, os
 
 app=Flask(__name__)
 CORS(app)
 
-pipeline=joblib.load("model.pkl")
-FEATURES=joblib.load("features.pkl")
+BASE_DIR = os.path.dirname(__file__)
+pipeline = joblib.load(os.path.join(BASE_DIR, "models", "model.pkl"))
+FEATURES = joblib.load(os.path.join(BASE_DIR, "models", "features.pkl"))
 print(f"Model loaded. Features : {FEATURES}")
 
 @app.route("/health")
@@ -38,15 +39,15 @@ def predict():
         results.append({
             "path" : f.get("path", ""),
             "prediction": int(preds[i]),
-            "risk_score" : score,
-            "risk_level" : (
+            "riskScore" : score,
+            "riskLevel" : (
                 "high" if score > 0.65 else
                 "medium" if score > 0.35 else
                 "low"
             )
         })
 
-        results.sort(key=lambda x: x["risk_score"], reverse=True)  #sort the result array as per highest risky files on top and then lower
+        results.sort(key=lambda x: x["riskScore"], reverse=True)  #sort the result array as per highest risky files on top and then lower
 
     return jsonify({"results" : results})
 

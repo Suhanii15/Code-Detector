@@ -1,19 +1,66 @@
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
+import { Navbar } from './components/Navbar'
+import { AnalyzePage } from './pages/AnalyzePage'
+import { Dashboard } from './pages/Dashboard'
+import api from './services/api'
 
-function App() {
-  const [count, setCount] = useState(0)
+function parseUrl(url) {
+  const m = url.match(/github\.com\/([^\/]+)\/([^\/]+?)(?:\/|\.git|$)/)
+  if (!m) return null
+  return { owner: m[1], repo: m[2].replace(/\.git$/, '') }
+}
+
+export default function App() {
+  const [view, setView] = useState('analyze')
+  const [loading, setLoading] = useState(false)
+  const [result, setResult] = useState(null)
+  const [error, setError] = useState(null)
+
+  const handleAnalyze = useCallback(async (url) => {
+    const parsed = parseUrl(url)
+    if (!parsed) {
+      setError('Invalid GitHub URL. Use format: https://github.com/owner/repo')
+      return
+    }
+    try{
+      setError(null)
+      setLoading(true)
+      setView("analyze")
+
+      const res = await api.post("/analyze",{
+        repoUrl : url,
+      })
+      setResult(res.data)
+      setView("dashboard")
+    }
+    catch(err){
+      console.error(err)
+      setError(
+        err.response?.data?.error || "Analysis failed"
+      )
+    }
+    finally{
+      setLoading(false)
+    }
+  },[])
+
+  const handleReset = useCallback(() => {
+    setView('analyze')
+    setResult(null)
+    setError(null)
+    setLoading(false)
+  }, [])
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white flex flex-col items-center justify-center gap-6 p-8">
-      <h1 className="text-4xl font-bold">Vite + React + Tailwind</h1>
-      <button
-        className="px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 transition cursor-pointer text-lg font-medium"
-        onClick={() => setCount((c) => c + 1)}
-      >
-        Count is {count}
-      </button>
+    <div className="min-h-screen bg-gray-950 text-gray-300 flex flex-col">
+      <Navbar onReset={handleReset} />
+      <div className="flex-1 flex flex-col min-h-0">
+        {view === 'dashboard' && result ? (
+          <Dashboard result={result} onBack={handleReset} />
+        ) : (
+          <AnalyzePage onAnalyze={handleAnalyze} loading={loading} error={error} />
+        )}
+      </div>
     </div>
   )
 }
-
-export default App

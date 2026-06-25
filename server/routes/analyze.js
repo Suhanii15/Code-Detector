@@ -10,18 +10,35 @@ router.post("/", async(req,res) => {
     try{
 
         const {repoUrl}=req.body;
-        const match =  repoUrl.match(/github\.com\/([^\/]+)\/([^\/]+)\/?$/);
+        const match = repoUrl.match(/github\.com\/([^\/]+)\/([^\/]+?)(?:\/|\.git|$)/);
 
-        if(!match) return res.status(400).json({error : "Invalid Github Url"});
-       
+if (!match) {
+  return res.status(400).json({ error: "Invalid GitHub URL" });
+}
 
-        const[,owner,repo]=match; //owner and repo name is on index 1 and 2
+const owner = match[1];
+const repo = match[2]; //owner and repo name is on index 1 and 2
 
          //Uses a Regular Expression (match) to split the URL and isolate the repository owner (username/org) 
         // and the repository name. If the URL is incorrectly formatted, it immediately stops and returns a 400 Bad Request error.
 
         const cached = await Analysis.findOne({owner,repo});
-        if(cached) return res.json(cached.results);
+        if(cached) {
+          const total = cached.results.length
+          return res.json({
+            owner: cached.owner,
+            repo: cached.repo,
+            analyzedAt: cached.analyzedAt,
+            totalFiles: total,
+            stats: {
+              total,
+              high: cached.results.filter(f => f.riskLevel === "high").length,
+              medium: cached.results.filter(f => f.riskLevel === "medium").length,
+              low: cached.results.filter(f => f.riskLevel === "low").length,
+            },
+            files: cached.results,
+          })
+        }
         //if that url already has been processed its data must have been saved in the mongo db data base
         //so we skip all the calculations and get the pre-existing calculated data from the db
 
@@ -61,7 +78,14 @@ router.post("/", async(req,res) => {
 
         await Analysis.create({owner,repo,results,analyzedAt : new Date()});
         //stores the data in mongo db
-        res.json({owner, repo, totalFiles : results.length, files : results});
+        const stats = {
+    total: results.length,
+    high: results.filter(f => f.riskLevel === "high").length,
+    medium: results.filter(f => f.riskLevel === "medium").length,
+    low: results.filter(f => f.riskLevel === "low").length
+};
+
+        res.json({owner, repo, analyzedAt : new Date(), totalFiles : results.length,stats, files : results});
 
     }
     catch(err){
