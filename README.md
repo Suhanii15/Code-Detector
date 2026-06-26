@@ -40,6 +40,9 @@ The application is built using a microservice architecture consisting of:
 - Responsive dashboard with interactive file inspection
 
 ---
+## Demo
+
+
 
 <h2>Analyze Flow</h2>
 
@@ -369,4 +372,3 @@ Through this project I explored:
 
 ---
 
-<img width="1600" height="900" alt="WhatsApp Image 2026-06-26 at 2 21 26 PM" src="https://github.com/user-attachments/assets/f3903cc0-7c54-429d-974e-fdabd1b50c6a" />
