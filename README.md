@@ -50,19 +50,19 @@ The application is built using a microservice architecture consisting of:
 ## Analyze Repository
 
 ![Analyze Repository](https://github.com/user-attachments/assets/8469c937-fcb5-43db-9b3c-fbbb5281166f)
-<img width="1600" height="900" alt="WhatsApp Image 2026-06-26 at 2 21 43 PM" src="https://github.com/user-attachments/assets/e448de71-4070-4eee-b155-dbf4c6aad29f" />
+![Analysis](https://github.com/user-attachments/assets/e448de71-4070-4eee-b155-dbf4c6aad29f)
 
 ---
 
 ## Dashboard
 
-![Dashboard](screenshots/dashboard.png)
+![Dashboard](https://github.com/user-attachments/assets/cb91145c-451b-4213-b979-aed22167123b)
 
 ---
 
 ## File Details
 
-![Details](screenshots/details.png)
+![Details](https://github.com/user-attachments/assets/6e98a05a-729c-4d40-90f1-de53fac70ff9")
 
 ---
 
