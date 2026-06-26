@@ -371,6 +371,4 @@ Through this project I explored:
 
 ---
 
-# License
-
-This project is licensed under the MIT License.<img width="1600" height="900" alt="WhatsApp Image 2026-06-26 at 2 21 26 PM" src="https://github.com/user-attachments/assets/63fcc8d1-ccdf-4542-a640-3756f08b6c99" />
+<img width="1600" height="900" alt="WhatsApp Image 2026-06-26 at 2 21 26 PM" src="https://github.com/user-attachments/assets/f3903cc0-7c54-429d-974e-fdabd1b50c6a" />
