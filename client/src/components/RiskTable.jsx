@@ -66,7 +66,7 @@ export function RiskTable({ files, onSelect, selectedPath }) {
           placeholder="Search files..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="flex-1 bg-white border border-gray-300 rounded-md px-3 py-1.5 text-sm text-gray-800 placeholder-gray-400 outline-none focus:border-blue-500"
+          className="flex-1 bg-white border border-gray-200 rounded-md px-3 py-1.5 text-sm text-gray-800 placeholder-gray-400 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20"
         />
         <div className="flex gap-1">
           {LEVELS.map((level) => {
@@ -95,7 +95,7 @@ export function RiskTable({ files, onSelect, selectedPath }) {
               {COLUMNS.map((col) => (
                 <th
                   key={col.key}
-                  className={`${col.align} py-2 pr-4 font-medium ${col.sortable ? 'cursor-pointer select-none' : ''} ${col.width || ''}`}
+                  className={`${col.align} py-2 pr-4 font-semibold ${col.sortable ? 'cursor-pointer select-none' : ''} ${col.width || ''}`}
                   onClick={col.sortable ? () => toggleSort(col.key) : undefined}
                 >
                   {col.label}
@@ -108,7 +108,7 @@ export function RiskTable({ files, onSelect, selectedPath }) {
             {sorted.map((f) => (
               <tr
                 key={f.path}
-                className={`border-b border-gray-100 hover:bg-gray-50 cursor-pointer transition-colors ${selectedPath === f.path ? 'bg-blue-50' : ''}`}
+                className={`border-b border-gray-100 hover:bg-gray-50/80 cursor-pointer transition-colors ${selectedPath === f.path ? 'bg-blue-50/60' : ''}`}
                 onClick={() => onSelect?.(f)}
               >
                 <td className="py-2.5 pr-4 text-gray-700 font-mono text-xs truncate max-w-[400px]">{f.path}</td>
@@ -121,7 +121,7 @@ export function RiskTable({ files, onSelect, selectedPath }) {
           </tbody>
         </table>
         {sorted.length === 0 && (
-          <p className="text-center text-gray-400 py-8 text-sm">No files match your search.</p>
+          <p className="text-center text-gray-400/70 py-8 text-sm">No files match your search.</p>
         )}
       </div>
     </div>

@@ -65,14 +65,14 @@ export function Dashboard({ result, onBack }) {
         <div className="max-w-7xl mx-auto w-full px-4 py-5 space-y-5">
           {/* Repo summary + health */}
           <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }}>
-            <Card className="px-4 py-3 flex items-center justify-between gap-4 transition-all duration-200 hover:-translate-y-1 cursor-pointer">
+            <Card className="rounded-xl shadow-sm px-5 py-3 flex items-center justify-between gap-4 transition-all duration-200 hover:-translate-y-1 cursor-pointer">
             <div className="flex items-center gap-4 min-w-0">
               <div className={`flex items-center gap-2.5 px-3 py-1.5 rounded-md border ${health.bg} ${health.border} shrink-0`}>
                 <HealthRing pct={healthPct} size={28} strokeWidth={3} color={health.hex} />
                 <span className={`text-xs font-medium ${health.color}`}>{health.label}</span>
               </div>
               <div className="min-w-0">
-                <h2 className="text-sm font-medium text-gray-900 truncate">
+                <h2 className="text-sm font-semibold text-gray-900 truncate">
                   {owner}/<span className="font-semibold">{repo}</span>
                 </h2>
                 <p className="text-xs text-gray-500 mt-0.5 flex items-center gap-3">
@@ -112,9 +112,9 @@ export function Dashboard({ result, onBack }) {
 
           {/* Risk bars */}
           <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35, delay: 0.1 }}>
-            <Card className="p-4 transition-all duration-200 hover:-translate-y-1 cursor-pointer">
-            <div className="text-xs text-gray-500 mb-3">Risk Distribution</div>
-            <div className="space-y-2.5">
+            <Card className="bg-gray-50/40 p-3 transition-all duration-200 hover:-translate-y-1 cursor-pointer">
+            <div className="text-xs text-gray-400 mb-2.5">Risk Distribution</div>
+            <div className="space-y-2">
               {['high', 'medium', 'low'].map((level) => {
                 const pct = stats.total > 0 ? (stats[level] / stats.total) * 100 : 0
                 const c = RISK_COLORS[level]
@@ -140,7 +140,7 @@ export function Dashboard({ result, onBack }) {
           {/* Repository Insights */}
           {insights && (
             <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35, delay: 0.15 }}>
-              <Card className="p-4 transition-all duration-200 hover:-translate-y-1 cursor-pointer">
+              <Card className="rounded-xl p-5 shadow-sm transition-all duration-200 hover:-translate-y-1 cursor-pointer">
                   <div className="text-xs text-gray-500 uppercase tracking-wider mb-3 font-medium">Repository Insights</div>
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
                   <div>
@@ -177,9 +177,9 @@ export function Dashboard({ result, onBack }) {
           {/* Hotspots */}
           {hotspots?.length > 0 && (
             <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35, delay: 0.2 }}>
-              <Card className="p-4 transition-all duration-200 hover:-translate-y-1 cursor-pointer">
-              <div className="text-xs text-gray-500 uppercase tracking-wider mb-3 font-medium">Risk Hotspots</div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+              <Card className="p-3 transition-all duration-200 hover:-translate-y-1 cursor-pointer">
+              <div className="text-xs text-gray-400 font-medium mb-2.5">Risk hotspots</div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2">
                 {hotspots.map((h, i) => (
                   <motion.div
                     key={h.path}
@@ -208,7 +208,7 @@ export function Dashboard({ result, onBack }) {
           {/* Table */}
           <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35, delay: 0.3 }}>
             <div className="flex-1 min-w-0">
-              <Card className="p-4 transition-all duration-200 hover:-translate-y-1 cursor-pointer">
+              <Card className="rounded-xl shadow-sm p-5 transition-all duration-200 hover:-translate-y-1 cursor-pointer">
                 <div className="text-xs text-gray-500 uppercase tracking-wider mb-3 font-medium">Files</div>
                 <RiskTable files={files} onSelect={setSelectedFile} selectedPath={selectedFile?.path} />
               </Card>
