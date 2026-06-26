@@ -41,28 +41,24 @@ The application is built using a microservice architecture consisting of:
 
 ---
 
-# Screenshots
+<h2>Analyze Flow</h2>
 
-> Replace these with actual screenshots after deployment.
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/8469c937-fcb5-43db-9b3c-fbbb5281166f" width="48%">
+  <img src="https://github.com/user-attachments/assets/e448de71-4070-4eee-b155-dbf4c6aad29f" width="48%">
+</p>
 
-## Analyze Repository
+<h2>Dashboard</h2>
 
-## Analyze Repository
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/cb91145c-451b-4213-b979-aed22167123b" width="90%">
+</p>
 
-![Analyze Repository](https://github.com/user-attachments/assets/8469c937-fcb5-43db-9b3c-fbbb5281166f)
-![Analysis](https://github.com/user-attachments/assets/e448de71-4070-4eee-b155-dbf4c6aad29f)
+<h2>File Details</h2>
 
----
-
-## Dashboard
-
-![Dashboard](https://github.com/user-attachments/assets/cb91145c-451b-4213-b979-aed22167123b)
-
----
-
-## File Details
-
-![Details](https://github.com/user-attachments/assets/6e98a05a-729c-4d40-90f1-de53fac70ff9")
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/6e98a05a-729c-4d40-90f1-de53fac70ff9" width="90%">
+</p>
 
 ---
 
