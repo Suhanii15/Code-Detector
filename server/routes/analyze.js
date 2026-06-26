@@ -66,6 +66,8 @@ const repoInfo = await getRepoInfo(owner,repo);
             repo: cached.repo,
             analyzedAt: cached.analyzedAt,
             totalFiles: total,
+            stars: repoInfo.stars,
+            forks: repoInfo.forks,
             stats: {
               total,
               high: filesWithRecs.filter(f => f.riskLevel === "high").length,
@@ -137,7 +139,7 @@ const repoInfo = await getRepoInfo(owner,repo);
 
         const hotspots = computeHotspots(results);
 
-        res.json({owner, repo, analyzedAt : new Date(), totalFiles : results.length, stats, hotspots, files : results});
+        res.json({owner, repo, analyzedAt : new Date(), totalFiles : results.length, stars: repoInfo.stars, forks: repoInfo.forks, stats, hotspots, files : results});
 
     }
     catch(err){

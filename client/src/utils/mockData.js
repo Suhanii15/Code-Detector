@@ -90,6 +90,8 @@ export function generateMockResult(owner, repo) {
     repo,
     analyzedAt: new Date().toISOString(),
     totalFiles: fileResults.length,
+    stars: rand(50, 15000),
+    forks: rand(10, 3000),
     stats,
     files: fileResults,
   }

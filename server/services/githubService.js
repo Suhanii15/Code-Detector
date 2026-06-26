@@ -57,7 +57,9 @@ async function getRepoInfo(owner,repo){
     })
 
     return {
-        pushed_at : data.pushed_at
+        pushed_at : data.pushed_at,
+        stars : data.stargazers_count,
+        forks : data.forks_count
     };
 }
 

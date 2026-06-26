@@ -15,6 +15,12 @@ function computeHealth(stats) {
   return { label: 'Good', color: 'text-green-700', hex: '#22c55e', dot: 'bg-green-500', bg: 'bg-green-50', border: 'border-green-200' }
 }
 
+function fmt(n) {
+  if (!n) return '0'
+  if (n >= 1000) return (n / 1000).toFixed(n >= 10000 ? 0 : 1) + 'k'
+  return String(n)
+}
+
 function computeInsights(files) {
   if (!files?.length) return null
   const totalLoc = files.reduce((s, f) => s + (f.loc || 0), 0)
@@ -28,7 +34,7 @@ function computeInsights(files) {
 
 export function Dashboard({ result, onBack }) {
   const [selectedFile, setSelectedFile] = useState(null)
-  const { owner, repo, analyzedAt, totalFiles, stats, hotspots, files } = result
+  const { owner, repo, analyzedAt, totalFiles, stats, hotspots, files, stars, forks } = result
   const health = computeHealth(stats)
   const insights = useMemo(() => computeInsights(files), [files])
 
@@ -59,7 +65,7 @@ export function Dashboard({ result, onBack }) {
         <div className="max-w-7xl mx-auto w-full px-4 py-5 space-y-5">
           {/* Repo summary + health */}
           <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }}>
-            <Card className="px-4 py-3 flex items-center justify-between gap-4">
+            <Card className="px-4 py-3 flex items-center justify-between gap-4 transition-all duration-200 hover:-translate-y-1 cursor-pointer">
             <div className="flex items-center gap-4 min-w-0">
               <div className={`flex items-center gap-2.5 px-3 py-1.5 rounded-md border ${health.bg} ${health.border} shrink-0`}>
                 <HealthRing pct={healthPct} size={28} strokeWidth={3} color={health.hex} />
@@ -69,8 +75,22 @@ export function Dashboard({ result, onBack }) {
                 <h2 className="text-sm font-medium text-gray-900 truncate">
                   {owner}/<span className="font-semibold">{repo}</span>
                 </h2>
-                <p className="text-xs text-gray-500 mt-0.5">
-                  {totalFiles} files &middot; Analyzed {new Date(analyzedAt).toLocaleString()}
+                <p className="text-xs text-gray-500 mt-0.5 flex items-center gap-3">
+                  <span>{totalFiles} files</span>
+                  <span className="flex items-center gap-1">
+                    <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                    </svg>
+                    {fmt(stars)}
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <line x1="6" y1="3" x2="6" y2="15" /><circle cx="18" cy="6" r="3" /><circle cx="6" cy="18" r="3" /><path d="M18 9a9 9 0 01-9 9" />
+                    </svg>
+                    {fmt(forks)}
+                  </span>
+                  <span className="text-gray-300">&middot;</span>
+                  <span>Analyzed {new Date(analyzedAt).toLocaleString()}</span>
                 </p>
               </div>
             </div>
@@ -90,24 +110,29 @@ export function Dashboard({ result, onBack }) {
             ))}
           </div>
 
-          {/* Risk bar */}
+          {/* Risk bars */}
           <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35, delay: 0.1 }}>
-            <Card className="p-4">
-            <div className="text-xs text-gray-500 mb-2">Risk Distribution</div>
-            <div className="flex h-2 rounded-full overflow-hidden bg-gray-100">
+            <Card className="p-4 transition-all duration-200 hover:-translate-y-1 cursor-pointer">
+            <div className="text-xs text-gray-500 mb-3">Risk Distribution</div>
+            <div className="space-y-2.5">
               {['high', 'medium', 'low'].map((level) => {
                 const pct = stats.total > 0 ? (stats[level] / stats.total) * 100 : 0
-                if (pct === 0) return null
-                return <div key={level} className={`${RISK_COLORS[level].bar} animate-bar-grow`} style={{ width: `${pct}%` }} />
+                const c = RISK_COLORS[level]
+                return (
+                  <div key={level}>
+                    <div className="flex items-center justify-between text-xs mb-1">
+                      <span className="flex items-center gap-1.5">
+                        <span className={`w-2 h-2 rounded-full ${c.dot}`} />
+                        <span className="text-gray-600 capitalize">{level}</span>
+                      </span>
+                      <span className="text-gray-500 tabular-nums">{pct.toFixed(0)}% ({stats[level]})</span>
+                    </div>
+                    <div className="h-1.5 rounded-full bg-gray-100 overflow-hidden">
+                      <div className={`h-full rounded-full ${c.bar} animate-bar-grow`} style={{ width: `${pct}%` }} />
+                    </div>
+                  </div>
+                )
               })}
-            </div>
-            <div className="flex gap-4 mt-2 text-xs text-gray-500">
-              {['high', 'medium', 'low'].map((level) => (
-                <span key={level} className="flex items-center gap-1.5">
-                  <span className={`w-2 h-2 rounded-full ${RISK_COLORS[level].dot}`} />
-                  {level} ({stats[level]})
-                </span>
-              ))}
             </div>
           </Card>
           </motion.div>
@@ -115,8 +140,8 @@ export function Dashboard({ result, onBack }) {
           {/* Repository Insights */}
           {insights && (
             <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35, delay: 0.15 }}>
-              <Card className="p-4">
-                <div className="text-xs text-gray-500 uppercase tracking-wider mb-3 font-medium">Repository Insights</div>
+              <Card className="p-4 transition-all duration-200 hover:-translate-y-1 cursor-pointer">
+                  <div className="text-xs text-gray-500 uppercase tracking-wider mb-3 font-medium">Repository Insights</div>
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
                   <div>
                     <div className="text-xs text-gray-500">Total LOC</div>
@@ -152,7 +177,7 @@ export function Dashboard({ result, onBack }) {
           {/* Hotspots */}
           {hotspots?.length > 0 && (
             <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35, delay: 0.2 }}>
-              <Card className="p-4">
+              <Card className="p-4 transition-all duration-200 hover:-translate-y-1 cursor-pointer">
               <div className="text-xs text-gray-500 uppercase tracking-wider mb-3 font-medium">Risk Hotspots</div>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
                 {hotspots.map((h, i) => (
@@ -160,8 +185,9 @@ export function Dashboard({ result, onBack }) {
                     key={h.path}
                     initial={{ opacity: 0, y: 8 }}
                     animate={{ opacity: 1, y: 0 }}
+                    whileHover={{ y: -3 }}
                     transition={{ duration: 0.35, delay: 0.3 + i * 0.06 }}
-                    className="rounded border border-gray-200 bg-gray-50/50 px-3 py-2.5"
+                    className="rounded border border-gray-200 bg-gray-50/50 px-3 py-2.5 cursor-pointer"
                   >
                     <div className="text-xs font-mono text-gray-700 truncate mb-2" title={h.path}>{h.path}</div>
                     <div className="flex items-baseline gap-2">
@@ -182,7 +208,7 @@ export function Dashboard({ result, onBack }) {
           {/* Table */}
           <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35, delay: 0.3 }}>
             <div className="flex-1 min-w-0">
-              <Card className="p-4">
+              <Card className="p-4 transition-all duration-200 hover:-translate-y-1 cursor-pointer">
                 <div className="text-xs text-gray-500 uppercase tracking-wider mb-3 font-medium">Files</div>
                 <RiskTable files={files} onSelect={setSelectedFile} selectedPath={selectedFile?.path} />
               </Card>
