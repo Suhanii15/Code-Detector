@@ -1,0 +1,376 @@
+# Code Detector
+
+> An ML-powered GitHub repository analyzer that predicts bug-prone files using repository history and software engineering metrics.
+
+![React](https://img.shields.io/badge/Frontend-React-blue?logo=react)
+![Express](https://img.shields.io/badge/Backend-Express-black?logo=express)
+![Flask](https://img.shields.io/badge/ML-Flask-lightgrey?logo=flask)
+![Scikit-Learn](https://img.shields.io/badge/ML-Scikit--Learn-orange?logo=scikitlearn)
+![MongoDB](https://img.shields.io/badge/Database-MongoDB-green?logo=mongodb)
+![License](https://img.shields.io/badge/License-MIT-blue)
+
+---
+
+## Overview
+
+Code Detector is a full-stack developer tool that analyzes public GitHub repositories and predicts which source files are most likely to contain defects.
+
+Instead of relying only on static code analysis, it combines repository history, developer activity, and software engineering metrics with a Machine Learning model to estimate bug risk for every file.
+
+The application is built using a microservice architecture consisting of:
+
+- React Frontend
+- Express.js Backend
+- Flask ML Service
+- MongoDB Cache
+- GitHub REST API
+
+---
+
+## Features
+
+- Analyze any public GitHub repository
+- ML-based bug risk prediction
+- Repository health overview
+- File-level risk scores
+- Repository hotspot detection
+- Explainable predictions
+- Actionable code quality recommendations
+- Intelligent caching with automatic repository freshness checks
+- Responsive dashboard with interactive file inspection
+
+---
+
+# Screenshots
+
+> Replace these with actual screenshots after deployment.
+
+## Analyze Repository
+
+![Analyze](<img width="1600" height="900" alt="WhatsApp Image 2026-06-26 at 2 21 26 PM" src="https://github.com/user-attachments/assets/8469c937-fcb5-43db-9b3c-fbbb5281166f" />
+)
+
+---
+
+## Dashboard
+
+![Dashboard](screenshots/dashboard.png)
+
+---
+
+## File Details
+
+![Details](screenshots/details.png)
+
+---
+
+## Tech Stack
+
+### Frontend
+
+- React
+- Tailwind CSS
+- Axios
+
+### Backend
+
+- Node.js
+- Express.js
+- MongoDB
+- Mongoose
+
+### Machine Learning
+
+- Flask
+- Scikit-learn
+- Pandas
+- NumPy
+- Joblib
+
+### APIs
+
+- GitHub REST API
+
+---
+
+# System Architecture
+
+```text
+                    GitHub REST API
+                           │
+                           ▼
+                  Express Backend
+                           │
+          ┌────────────────┴────────────────┐
+          │                                 │
+          ▼                                 ▼
+ Feature Extraction                 MongoDB Cache
+          │
+          ▼
+      Flask ML Service
+          │
+          ▼
+ Gradient Boosting Model
+          │
+          ▼
+     Prediction Results
+          │
+          ▼
+      React Dashboard
+```
+
+---
+
+# Machine Learning Pipeline
+
+## 1. Data Collection
+
+Repository metadata is collected using the GitHub REST API.
+
+For each source file, the application retrieves:
+
+- File contents
+- Commit history
+- Contributors
+- Repository metadata
+
+---
+
+## 2. Feature Engineering
+
+The following features are extracted:
+
+| Feature | Description |
+|----------|-------------|
+| LOC | Lines of Code |
+| Churn Rate | Number of commits affecting the file |
+| Cyclomatic Complexity | Estimated control flow complexity |
+| Comment Density | Ratio of comment lines to total lines |
+| Unique Authors | Number of contributors |
+| Bug Fix Percentage | Ratio of bug-fixing commits |
+
+---
+
+## 3. Model Training
+
+The dataset is cleaned and preprocessed before training.
+
+The project uses a **Gradient Boosting Classifier** for defect prediction.
+
+Training pipeline includes:
+
+- Data Cleaning
+- Feature Scaling
+- Train/Test Split
+- 5-Fold Cross Validation
+- ROC-AUC Evaluation
+- Feature Importance Analysis
+
+---
+
+## Prediction Workflow
+
+```text
+GitHub Repository
+        │
+        ▼
+Fetch Repository Tree
+        │
+        ▼
+Download File Content
+        │
+        ▼
+Extract Software Metrics
+        │
+        ▼
+Generate Feature Vector
+        │
+        ▼
+ML Prediction
+        │
+        ▼
+Repository Dashboard
+```
+
+---
+
+# Dashboard Features
+
+### Repository Summary
+
+- Repository statistics
+- Health overview
+- Risk distribution
+
+### File Analysis
+
+For every source file:
+
+- Bug Risk Score
+- Risk Level
+- Cyclomatic Complexity
+- Churn Rate
+- Comment Density
+- Contributor Count
+
+### Explainability
+
+Each prediction includes contextual recommendations based on extracted software metrics.
+
+Examples:
+
+- Split large files
+- Increase test coverage
+- Reduce complexity
+- Improve documentation
+- Review ownership of highly modified files
+
+### Repository Hotspots
+
+Highlights directories containing the highest concentration of risky files to help developers prioritize code reviews.
+
+---
+
+# Project Structure
+
+```
+Code-Detector/
+
+├── frontend/
+│   ├── src/
+│   ├── components/
+│   ├── pages/
+│   └── utils/
+│
+├── server/
+│   ├── routes/
+│   ├── services/
+│   ├── models/
+│   └── server.js
+│
+├── ml-service/
+│   ├── data/
+│   ├── models/
+│   ├── scripts/
+│   ├── app.py
+│   └── train.py
+│
+└── README.md
+```
+
+---
+
+# Getting Started
+
+## Clone Repository
+
+```bash
+git clone https://github.com/your-username/Code-Detector.git
+
+cd Code-Detector
+```
+
+---
+
+## Backend
+
+```bash
+cd server
+
+npm install
+
+npm start
+```
+
+---
+
+## ML Service
+
+```bash
+cd ml-service
+
+pip install -r requirements.txt
+
+python app.py
+```
+
+---
+
+## Frontend
+
+```bash
+cd frontend
+
+npm install
+
+npm run dev
+```
+
+---
+
+# Environment Variables
+
+## Backend (.env)
+
+```
+PORT=5000
+
+MONGODB_URI=your_mongodb_connection
+
+GITHUB_TOKEN=your_github_token
+
+ML_SERVICE=http://localhost:5001
+```
+
+---
+
+## ML Service (.env)
+
+```
+FLASK_ENV=development
+```
+
+---
+
+# Future Improvements
+
+- GitHub OAuth Authentication
+- Pull Request Analysis
+- Historical Trend Comparison
+- Team-Level Risk Analytics
+- CI/CD Integration
+- IDE Extension
+- Deep Learning-Based Defect Prediction
+
+---
+
+# Key Learnings
+
+Through this project I explored:
+
+- Microservice Architecture
+- Machine Learning Deployment
+- Software Repository Mining
+- Feature Engineering
+- GitHub API Integration
+- Backend Performance Optimization
+- Data Preprocessing
+- Model Evaluation
+- Full-Stack Application Development
+
+---
+
+# Acknowledgements
+
+- GitHub REST API
+- Scikit-learn
+- Flask
+- React
+- MongoDB
+- Express.js
+
+---
+
+# License
+
+This project is licensed under the MIT License.<img width="1600" height="900" alt="WhatsApp Image 2026-06-26 at 2 21 26 PM" src="https://github.com/user-attachments/assets/63fcc8d1-ccdf-4542-a640-3756f08b6c99" />
