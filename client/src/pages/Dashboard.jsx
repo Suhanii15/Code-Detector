@@ -1,12 +1,11 @@
-import { useMemo } from 'react'
-import { motion } from 'framer-motion'
+import { useMemo, useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { MetricCard } from '../components/MetricCard'
 import { Card } from '../components/Card'
 import { RiskTable } from '../components/RiskTable'
 import { FileDetailsPanel } from '../components/FileDetailsPanel'
 import { HealthRing } from '../components/HealthRing'
 import { RISK_COLORS } from '../utils/constants'
-import { useState } from 'react'
 
 function computeHealth(stats) {
   const highPct = stats.total > 0 ? (stats.high / stats.total) * 100 : 0
@@ -23,9 +22,8 @@ function computeInsights(files) {
   const avgChurn = (files.reduce((s, f) => s + (f.churn_rate || 0), 0) / files.length).toFixed(1)
   const avgBugFix = (files.reduce((s, f) => s + (f.bug_fix_pct || 0), 0) / files.length * 100).toFixed(0)
   const riskyFile = files.reduce((max, f) => f.riskScore > (max?.riskScore || 0) ? f : max, null)
-  const highCount = files.filter(f => f.riskLevel === 'high').length
   const highLoc = files.filter(f => f.riskLevel === 'high').reduce((s, f) => s + (f.loc || 0), 0)
-  return { totalLoc, avgComplexity, avgChurn, avgBugFix, riskyFile, highCount, highLoc }
+  return { totalLoc, avgComplexity, avgChurn, avgBugFix, riskyFile, highLoc }
 }
 
 export function Dashboard({ result, onBack }) {
@@ -44,7 +42,7 @@ export function Dashboard({ result, onBack }) {
   const healthPct = health.label === 'Good' ? 85 : health.label === 'Moderate' ? 50 : 25
 
   return (
-    <div className="flex-1 flex flex-col min-h-0">
+    <div className="flex-1 flex flex-col min-h-0 relative bg-page">
       {/* Minimal header */}
       <div className="border-b border-gray-200 bg-white px-4 py-2.5 flex items-center gap-3 shrink-0">
         <button onClick={onBack} className="flex items-center gap-2 text-gray-400 hover:text-gray-600 transition-colors">
@@ -78,7 +76,7 @@ export function Dashboard({ result, onBack }) {
             </div>
             <button
               onClick={onBack}
-              className="text-xs text-gray-400 hover:text-gray-600 transition-colors shrink-0"
+              className="text-xs text-gray-500 hover:text-gray-700 border border-gray-200 hover:border-gray-300 rounded-md px-3 py-1.5 transition-colors shrink-0 cursor-pointer"
             >
               New analysis
             </button>
@@ -181,20 +179,24 @@ export function Dashboard({ result, onBack }) {
           </motion.div>
           )}
 
-          {/* Table + Side panel */}
-          <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35, delay: 0.3 }} className="flex flex-col lg:flex-row gap-0 lg:gap-5">
+          {/* Table */}
+          <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35, delay: 0.3 }}>
             <div className="flex-1 min-w-0">
               <Card className="p-4">
                 <div className="text-xs text-gray-500 uppercase tracking-wider mb-3 font-medium">Files</div>
                 <RiskTable files={files} onSelect={setSelectedFile} selectedPath={selectedFile?.path} />
               </Card>
             </div>
-            {selectedFile && (
-              <FileDetailsPanel file={selectedFile} onClose={() => setSelectedFile(null)} />
-            )}
           </motion.div>
         </div>
       </div>
+
+      {/* File details drawer */}
+      <AnimatePresence>
+        {selectedFile && (
+          <FileDetailsPanel file={selectedFile} onClose={() => setSelectedFile(null)} />
+        )}
+      </AnimatePresence>
     </div>
   )
 }
