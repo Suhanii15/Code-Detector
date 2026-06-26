@@ -47,8 +47,10 @@ The application is built using a microservice architecture consisting of:
 
 ## Analyze Repository
 
-![Analyze](<img width="1600" height="900" alt="WhatsApp Image 2026-06-26 at 2 21 26 PM" src="https://github.com/user-attachments/assets/8469c937-fcb5-43db-9b3c-fbbb5281166f" />
-)
+## Analyze Repository
+
+![Analyze Repository](https://github.com/user-attachments/assets/8469c937-fcb5-43db-9b3c-fbbb5281166f)
+<img width="1600" height="900" alt="WhatsApp Image 2026-06-26 at 2 21 43 PM" src="https://github.com/user-attachments/assets/e448de71-4070-4eee-b155-dbf4c6aad29f" />
 
 ---
 
