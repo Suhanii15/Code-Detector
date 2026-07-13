@@ -195,6 +195,9 @@ MONGODB_URI=your_mongodb_connection
 GITHUB_TOKEN=your_github_token
 
 ML_SERVICE=http://localhost:5001
+
+JWT_SECRET=<your_jwt_secret>
+
 ```
 
 ---
@@ -202,7 +205,8 @@ ML_SERVICE=http://localhost:5001
 ## ML Service (.env)
 
 ```
-FLASK_ENV=development
+GITHUB_TOKEN=github_pat_<your_token>
+
 ```
 
 ---
