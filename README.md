@@ -345,30 +345,7 @@ FLASK_ENV=development
 
 ---
 
-# Key Learnings
-
-Through this project I explored:
-
-- Microservice Architecture
-- Machine Learning Deployment
-- Software Repository Mining
-- Feature Engineering
-- GitHub API Integration
-- Backend Performance Optimization
-- Data Preprocessing
-- Model Evaluation
-- Full-Stack Application Development
 
 ---
 
-# Acknowledgements
-
-- GitHub REST API
-- Scikit-learn
-- Flask
-- React
-- MongoDB
-- Express.js
-
----
 
