@@ -207,21 +207,6 @@ JWT_SECRET=<your_jwt_secret>
 ```
 GITHUB_TOKEN=github_pat_<your_token>
 
-```
-
----
-
-# Future Improvements
-
-- GitHub OAuth Authentication
-- Pull Request Analysis
-- Historical Trend Comparison
-- Team-Level Risk Analytics
-- CI/CD Integration
-- IDE Extension
-- Deep Learning-Based Defect Prediction
-
----
 
 
 
