@@ -17,13 +17,7 @@ Code Detector is a full-stack developer tool that analyzes public GitHub reposit
 
 Instead of relying only on static code analysis, it combines repository history, developer activity, and software engineering metrics with a Machine Learning model to estimate bug risk for every file.
 
-The application is built using a microservice architecture consisting of:
 
-- React Frontend
-- Express.js Backend
-- Flask ML Service
-- MongoDB Cache
-- GitHub REST API
 
 ---
 
