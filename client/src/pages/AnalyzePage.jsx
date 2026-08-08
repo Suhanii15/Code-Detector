@@ -70,7 +70,7 @@ export function AnalyzePage({ onAnalyze, loading, error }) {
             Analyze a repository
           </motion.h1>
           <motion.p variants={item} className="text-sm text-gray-500 mb-8 leading-relaxed">
-            Enter a GitHub URL to scan for bug-prone files using ML-powered analysis.
+            Enter a GitHub URL to scan for bug-prone files.
           </motion.p>
 
           {/* Input card */}
